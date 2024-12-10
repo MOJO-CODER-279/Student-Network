@@ -12,13 +12,13 @@ void copyString( char source[], char destination[], int& size) {
     destination[size] = '\0';
     size++;
 }
-int student_Index( char data[], int indices[], int size, char name[]) {
+int student_Index( char arr[], int indices[], int size, char name[]) {
     for (int i = 0; i < size; i++) {
         int j = 0;
-        while (data[indices[i] + j] == name[j] && name[j] != '\0' && data[indices[i] + j] != '\0') {
+        while (arr[indices[i] + j] == name[j] && name[j] != '\0' && arr[indices[i] + j] != '\0') {
             j++;
         }
-        if (data[indices[i] + j] == '\0' && name[j] == '\0') {
+        if (arr[indices[i] + j] == '\0' && name[j] == '\0') {
             return i;
         }
     }
