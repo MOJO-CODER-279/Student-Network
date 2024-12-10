@@ -85,7 +85,7 @@ int main() {
     int friendships[FRIENDSHIPS][2]; 
     int counter = 0, dataIndex = 0, friendshipCounter = 0;
     ifstream fin;
-    fin.open("dataset.txt");
+    fin.open("StudentData.csv");
     if (!fin.is_open()) {
         cout << "file has not been opened." << endl;
     }
@@ -164,7 +164,7 @@ int main() {
             cout << endl;
         }
     }
-    char checkStudent[50] = "Ruhma Fatima";
+    char checkStudent[50] = "Tuba Rani";
     int Index = student_Index(studentData, studentIndices,counter, checkStudent);
 
     if (Index != -1) {
