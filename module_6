@@ -1,0 +1,113 @@
+#include <iostream>
+#include <fstream>
+#include <cstring>
+using namespace std;
+void copyString(char source[], char destination[], int& size) {
+    int i = 0;
+    while (source[i] != '\0') {
+        destination[size] = source[i];
+        i++;
+        size++;
+    }
+    destination[size] = '\0';
+    size++;
+}
+int student_Index(char arr[], int indices[], int size, char name[]) {
+    for (int i = 0; i < size; i++) {
+        int j = 0;
+        while (arr[indices[i] + j] == name[j] && name[j] != '\0' && arr[indices[i] + j] != '\0') {
+            j++;
+        }
+        if (arr[indices[i] + j] == '\0' && name[j] == '\0') {
+            return i;
+        }
+    }
+    return -1;
+}
+int commonFriends(int friendships[][2], int friendshipCount, int a, int b) {
+    int commonCount = 0;
+    for (int i = 0; i < friendshipCount; i++) {
+        int f1 = friendships[i][0];
+        int f2 = friendships[i][1];
+        if ((f1 == a && f2 == b) || (f1 == b && f2 == a)) {
+            continue;
+        }
+        if ((f1 == a || f1 == b) && (f2 == a || f2 == b)) {
+            commonCount++;
+        }
+    }
+    return commonCount;
+}
+int main() {
+    const int SIZE = 10000;
+    const int STUDENT = 100;
+    const int FRIENDSHIP = 1000;
+    char studentData[SIZE];
+    int studentIndices[STUDENT];
+    int friendships[FRIENDSHIP][2];
+    int counter = 0, dataIndex = 0, friendshipCounter = 0;
+    ifstream fin("s.txt");
+    if (!fin.is_open()) {
+        cout << "File not opened." << endl;
+    }
+    char line[256];
+    fin.getline(line, sizeof(line)); 
+    while (fin.getline(line, sizeof(line))) {
+        int i = 0;
+        char studentName[50] = {};
+        char currentName[50] = {};
+        while (line[i] != ',' && line[i] != '\0') {
+            studentName[i] = line[i];
+            i++;
+        }
+        studentName[i] = '\0';
+        if (student_Index(studentData, studentIndices, counter, studentName) == -1) {
+            studentIndices[counter] = dataIndex;
+            copyString(studentName, studentData, dataIndex);
+            counter++;
+        }
+        while (line[i] != '\0') {
+            while (line[i] == ',' || line[i] == ' ') i++;
+            int start = i;
+            while (line[i] != ',' && line[i] != '\0') i++;
+            int len = i - start;
+            strncpy(currentName, line + start, len);
+            currentName[len] = '\0';
+            if (currentName[0] != '\0') {
+                if (student_Index(studentData, studentIndices, counter, currentName) == -1) {
+                    studentIndices[counter] = dataIndex;
+                    copyString(currentName, studentData, dataIndex);
+                    counter++;
+                }
+                int studentIndex = student_Index(studentData, studentIndices, counter, studentName);
+                int friendIndex = student_Index(studentData, studentIndices, counter, currentName);
+                friendships[friendshipCounter][0] = studentIndex;
+                friendships[friendshipCounter][1] = friendIndex;
+                friendshipCounter++;
+            }
+        }
+    }
+    fin.close();
+    int alpha = 2; 
+    cout << "Potential Friendships (Common Friends >= " << alpha << "):" << endl;
+    for (int i = 0; i < counter; ++i) {
+        for (int j = i + 1; j < counter; ++j) {
+            bool isFriend = false;
+            for (int k = 0; k < friendshipCounter; k++) {
+                if ((friendships[k][0] == i && friendships[k][1] == j) || 
+                    (friendships[k][0] == j && friendships[k][1] == i)) {
+                    isFriend = true;
+                    break;
+                }
+            }
+            if (!isFriend) {
+                int common = commonFriends(friendships, friendshipCounter, i, j);
+                if (common >= alpha) {
+                    cout << studentData + studentIndices[i] << " - " << studentData + studentIndices[j]
+                         << " [Common Friends: " << common << "]" << endl;
+                }
+            }
+        }
+    }
+    return 0;
+}
